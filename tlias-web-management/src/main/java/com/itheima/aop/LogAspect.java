@@ -37,7 +37,7 @@ public class LogAspect {
 
         //操作时间
         LocalDateTime operateTime = LocalDateTime.now();
-
+        System.out.println("dd");
         //操作类名
         String className = joinPoint.getTarget().getClass().getName();
 
