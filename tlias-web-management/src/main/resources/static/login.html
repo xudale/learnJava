@@ -1,0 +1,100 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div>
+    <span>username</span><input type="text" id="username">
+</div>
+<div>
+    <span>password</span><input type="text" id="password">
+</div>
+<div>
+    <button id="submit">submit</button>
+</div>
+
+<div>
+    <button id="getDepts">getDepts</button>
+</div>
+
+<div>
+    <button id="deleteDept">deleteDept</button>
+</div>
+<script>
+    function ajaxPost(url, callback, body) {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                callback(xhr.responseText)
+            }
+        }
+        xhr.open('post', url, true);
+        xhr.setRequestHeader('content-type', 'application/json');
+        // xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+        // const form = new FormData();
+        // form.append('username', body.username);
+        // form.append('password', body.password);
+
+        xhr.send(JSON.stringify(body));
+        // xhr.send(form);
+    }
+
+    function ajaxGet(url, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                callback(xhr.responseText)
+            }
+        }
+
+        xhr.open('get', url, true);
+        xhr.setRequestHeader('Token', localStorage.getItem('token'));
+        xhr.send();
+    }
+
+    function ajaxDelete(url, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                callback(xhr.responseText)
+            }
+        }
+
+        xhr.open('delete', url, true);
+        xhr.setRequestHeader('Token', localStorage.getItem('token'));
+        xhr.send();
+    }
+
+    document.getElementById('username').value = 'dale';
+    document.getElementById('password').value = '1234';
+
+    document.getElementById('submit').addEventListener('click', _ => {
+        let username = document.getElementById('username').value;
+        let password = document.getElementById('password').value;
+        ajaxPost("http://localhost:8080/login", response => {
+            const body = JSON.parse(response);
+            localStorage.setItem('token', body.data);
+        }, {
+            username,
+            password
+        })
+    })
+
+    document.getElementById('getDepts').addEventListener('click', _ => {
+        ajaxGet("http://localhost:8080/depts", response => {
+            console.log(response)
+        })
+    })
+
+    document.getElementById('deleteDept').addEventListener('click', _ => {
+        ajaxDelete("http://localhost:8080/depts/1", response => {
+            console.log(response)
+        })
+    })
+</script>
+</body>
+</html>
